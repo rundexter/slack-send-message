@@ -4,17 +4,17 @@ var _ = require('lodash')
 
 module.exports = _.merge({
     simulation: true
-    , instance_id: 'local_test_instance'
+    , instance_id : 'local_test_instance'
     , urls: {
-        home: "http://rundexter.com/"
+        home : "http://rundexter.com/"
     }
     , instance_state: {
         active_step :  "local_test_step"
     }
     , workflow: {
-        "id" : "local_test_workflow"
-        , "title": "Local test workflow"
-        , "description": "A fixture workflow used to test a module"
+        "id"            : "local_test_workflow"
+        , "title"       : "Local test workflow"
+        , "description" : "A fixture workflow used to test a module"
     }
     , environment: {
        /*
@@ -50,7 +50,11 @@ module.exports = _.merge({
         local_test_step: {
             input: {
                 //Replace VAR1 with the name of an expected input, and add more inputs as needed.
-                VAR1: 'foo'
+                text        : 'This is a test message',
+                username    : 'Dexter Bot',
+                channel     : '#dexter-test',
+                webhook_url : 'https://hooks.slack.com/services/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',
+                icon_emoji  : ':simple_smile:'
             }
         }
     }
