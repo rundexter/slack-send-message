@@ -16,21 +16,47 @@ module.exports = {
      * @param {WFDataParser} dexter Container for all data used in this workflow.
      */
     , run: function(step, dexter) {
-        var postData = _.merge({
-            'icon_emoji': ':ghost:'
-         }, step.inputs())
-          , url  = step.input('webhook_url')
-          , self = this
+        var postData = {
+                icon_emoji: step.input('icon_emoji').first()
+                , text: step.input('text').first()
+                , username: step.input('username').first()
+            }
+            , channels = step.input('channel')
+            , url  = step.input('webhook_url').first()
+            , self = this
         ;
 
         if(!url) return this.fail("Webhook URL is required.");
         if(!postData.text) return this.fail("Text is required.");
+        if(channels.length === 0) return this.fail("Must post to at least one channel");
+        if(!postData.icon_emoji) {
+            postData.icon_emoji = ':ghost:';
+        }
 
-        rest.postJson(url, postData).on('complete', function(result, response) {
-            if(result instanceof Error) return console.error(result.stack || result);
-            if(response.statusCode !== 200) return self.fail({message: 'Error Result From Slack', code: response.statusCode, postData: postData});
-
-            return self.complete(_.merge(_.isObject(result) ? result : { result: result } , postData));
+        channels.each(function(channel) {
+            var data = _.clone(postData);
+            if(!/^[@#]/.test(channel)) {
+                channel = '#' + channel;
+                console.log('No prefix: assumed', channel);
+            }
+            data.channel = channel;
+            rest.postJson(url, data).on('complete', function(result, response) {
+                if(result instanceof Error) {
+                    return console.error(result.stack || result);
+                }
+                if(response.statusCode !== 200) {
+                    console.log(result);
+                    console.log('----');
+                    console.log(Object.keys(response));
+                    console.log('----');
+                    return self.fail({
+                        message: 'Error Result From Slack',
+                        code: response.statusCode,
+                        postData: postData
+                    });
+                }
+                return self.complete(_.merge(_.isObject(result) ? result : { result: result } , postData));
+            });
         });
    }
 };
