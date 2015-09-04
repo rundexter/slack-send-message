@@ -1,6 +1,3 @@
-/*
- * Metadata describing the module operation
- */
 {
     "inputs": [{
         "id": "text",
@@ -28,17 +25,8 @@
         "type"  : "string",
         "description" : "The emoji to use when sending your message"
     }],
-    //Required. Outputs the module emits.
     "outputs": [
-      //e.g.
-      /*
-        {
-            "id": "from",
-            "title":"From",
-            "type":"array"
-        }
-      */
     ],
     "icon" : "slack",
-    "title": "Slack Send Message" /* Required.A display name for the module */
+    "title": "Slack Send Message"
 }
