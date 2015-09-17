@@ -26,6 +26,7 @@ module.exports = {
             , url  = step.input('webhook_url').first()
             , connections = []
             , self = this
+            , data
         ;
 
         if(!url) return this.fail("Webhook URL is required.");
@@ -36,11 +37,11 @@ module.exports = {
 
         if(channels.length > 0) {
             channels.each(function(channel) {
-                var data = _.clone(postData);
-                if(!/^[@#]/.test(channel)) {
-                    channel = '#' + channel;
-                    console.log('No prefix: assumed', channel);
-                }
+                data = _.clone(postData);
+                //if(!/^[@#C]/.test(channel)) {
+                //    channel = '#' + channel;
+                //    console.log('No prefix: assumed', channel);
+                //}
                 data.channel = channel;
                 connections.push(self.send(data, url));
             });
