@@ -38,6 +38,7 @@ module.exports = {
         if(channels.length > 0) {
             channels.each(function(channel) {
                 data = _.clone(postData);
+                data.unfurl_links = true;
                 //if(!/^[@#C]/.test(channel)) {
                 //    channel = '#' + channel;
                 //    console.log('No prefix: assumed', channel);
