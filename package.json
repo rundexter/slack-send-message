@@ -5,6 +5,7 @@
   "main": "index.js",
   "author": "Run Dexter, Inc.",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "lodash": "^3.10.0",
     "q": "^1.4.1",
