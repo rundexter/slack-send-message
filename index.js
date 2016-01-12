@@ -30,7 +30,7 @@ module.exports = {
         ;
 
         if(!url) return this.fail("Webhook URL is required.");
-        if(!postData.text) return this.fail("Text is required.");
+        if(postData.text === undefined) return this.fail("Text is required.");
         if(!postData.icon_emoji) {
             postData.icon_emoji = ':ghost:';
         }
