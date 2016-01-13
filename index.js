@@ -31,9 +31,10 @@ module.exports = {
 
         if(!url) return this.fail("Webhook URL is required.");
         if(postData.text === undefined) return this.fail("Text is required.");
-        if(!postData.icon_emoji) {
-            postData.icon_emoji = ':ghost:';
-        }
+
+        //special case for when the text is "0"
+        //slack won't accept it without a leading space
+        if(postData.text === 0 || postData.text === "0") postData.text = " 0";
 
         if(channels.length > 0) {
             channels.each(function(channel) {
@@ -53,7 +54,7 @@ module.exports = {
         q.all(connections).then(function(results) {
             self.complete(results);
         })
-        .fail(this.fail);
+        .fail(this.fail.bind(this));
    }
    , send: function(data, url) {
         var deferred = q.defer();
