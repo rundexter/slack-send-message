@@ -17,19 +17,27 @@ module.exports = {
      * @param {WFDataParser} dexter Container for all data used in this workflow.
      */
     , run: function(step, dexter) {
-        var postData = {
-                icon_emoji: step.input('icon_emoji').first()
-                , text: step.input('text').first()
-                , username: step.input('username').first()
-            }
-            , channels = step.input('channel')
-            , url  = step.input('webhook_url').first()
+        var channels      = step.input('channel')
+            , provider    = dexter.provider('slack')
+            , username    = step.input('username').first()
+            , botToken    = provider.data('bot.bot_access_token')
+            , isBot       = !username && !!botToken //operate as the bot if we don't have a different username and we have a bot token
+            , accessToken =  botToken || provider.credentials('access_token')
+            , url         = 'https://slack.com/api/chat.postMessage'
             , connections = []
-            , self = this
+            , self        = this
+            , postData      = {
+                icon_emoji : step.input('icon_emoji').first()
+                , text     : step.input('text').first()
+                , as_user  : isBot 
+                , username : username
+                , token    : accessToken
+            }
             , data
         ;
 
-        if(!url) return this.fail("Webhook URL is required.");
+        self.log([accessToken, provider.data()]);
+
         if(postData.text === undefined) return this.fail("Text is required.");
 
         //special case for when the text is "0"
@@ -58,7 +66,7 @@ module.exports = {
    }
    , send: function(data, url) {
         var deferred = q.defer();
-        rest.postJson(url, data).on('complete', function(result, response) {
+        rest.post(url, {data:data}).on('complete', function(result, response) {
             if(result instanceof Error) {
                 return deferred.reject(result.stack || result);
             }

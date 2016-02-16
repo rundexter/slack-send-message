@@ -32,8 +32,8 @@ module.exports = _.merge({
             input: {
                 text        : 'Dexter test fixture...success!',
                 username    : 'Dexter Bot',
-                //Channel and webhook url should be in your env.js
-                icon_emoji  : ':triumph:'
+                channel     : '#general',
+                icon_emoji  : ':ghost:'
             }
         }
     }
