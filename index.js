@@ -51,13 +51,14 @@ module.exports = {
                 var map = { };
                 [ 'fallback', 'color', 'pretext', 'author_name', 'author_link', 'author_icon',
                   'title', 'title_link', 'text', 'fields', 'image_url', 'thumb_url' ].forEach( function( field ) {
-                      if ( item[ field ] ) attach[ field ] = item[ field ];
+                      if ( item[ field ] ) map[ field ] = item[ field ];
                    } );
 
                 attach.push( map );
             } );
 
             postData[ attachments ] = attach;
+            self.log( 'postdata', postData );
         }
 
         if(channels.length > 0) {
