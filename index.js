@@ -18,6 +18,7 @@ module.exports = {
      */
     , run: function(step, dexter) {
         var channels      = step.input('channel')
+            , attachments = step.input( 'attachments' )
             , provider    = dexter.provider('slack')
             , username    = step.input('username').first()
             , botToken    = provider.data('bot.bot_access_token')
@@ -43,6 +44,21 @@ module.exports = {
         //special case for when the text is "0"
         //slack won't accept it without a leading space
         if(postData.text === 0 || postData.text === "0") postData.text = " 0";
+
+        if ( attachments.length > 0 ) {
+            var attach = [ ];
+            attachments.each( function( item ) {
+                var map = { };
+                [ 'fallback', 'color', 'pretext', 'author_name', 'author_link', 'author_icon',
+                  'title', 'title_link', 'text', 'fields', 'image_url', 'thumb_url' ].forEach( function( field ) {
+                      if ( item[ field ] ) attach[ field ] = item[ field ];
+                   } );
+
+                attach.push( map );
+            } );
+
+            postData[ attachments ] = attach;
+        }
 
         if(channels.length > 0) {
             channels.each(function(channel) {
