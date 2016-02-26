@@ -57,7 +57,7 @@ module.exports = {
                 attach.push( map );
             } );
 
-            postData[ attachments ] = attach;
+            postData.attachments = attach;
             self.log( 'postdata', postData );
         }
 
