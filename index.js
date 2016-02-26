@@ -27,11 +27,12 @@ module.exports = {
             , connections = []
             , self        = this
             , postData      = {
-                icon_emoji : step.input('icon_emoji').first()
-                , text     : step.input('text').first()
-                , as_user  : isBot 
-                , username : username
-                , token    : accessToken
+                icon_emoji     : step.input('icon_emoji').first()
+                , text         : step.input('text').first()
+                , attachments  : step.input('attachments')
+                , as_user      : isBot
+                , username     : username
+                , token        : accessToken
             }
             , data
         ;
@@ -74,7 +75,7 @@ module.exports = {
                 return deferred.reject({
                     message: 'Error Result From Slack',
                     code: response.statusCode,
-                    postData: data 
+                    postData: data
                 });
             }
             return deferred.resolve(_.merge(

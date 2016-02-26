@@ -4,22 +4,32 @@
         "title":"Text",
         "type":"string",
         "description": "The message to send"
-    }, {
+    },
+    {
         "id": "username",
         "title" : "Username",
         "type": "string",
         "description": "The bot username to use"
-    }, {
+    },
+    {
         "id": "channel",
         "title": "Channel",
         "type" : "string",
         "description" : "The channel to send the message to"
-    }, {
+    },
+    {
         "id": "icon_emoji",
         "title" : "Icon Emoji",
         "type"  : "string",
         "description" : "The emoji to use when sending your message"
-    }],
+    },
+    {
+        "id": "attachments",
+        "title": "Attachments",
+        "description": "Attachments for the message"
+    }
+
+  ],
     "outputs": [
     ],
     "providers" : [{
