@@ -29,7 +29,6 @@ module.exports = {
             , postData      = {
                 icon_emoji     : step.input('icon_emoji').first()
                 , text         : step.input('text').first()
-                , attachments  : step.input('attachments')
                 , as_user      : isBot
                 , username     : username
                 , token        : accessToken
