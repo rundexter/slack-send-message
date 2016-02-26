@@ -58,7 +58,7 @@ module.exports = {
             } );
 
             /* the attachments "array" actually needs to be a JSON encoded string. Weird. */
-            postData.attachments = JSON.encode( attach );
+            postData.attachments = JSON.stringify( attach );
             self.log( 'postdata', postData );
         }
 
