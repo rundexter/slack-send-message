@@ -57,7 +57,8 @@ module.exports = {
                 attach.push( map );
             } );
 
-            postData.attachments = attach;
+            /* the attachments "array" actually needs to be a JSON encoded string. Weird. */
+            postData.attachments = JSON.encode( attach );
             self.log( 'postdata', postData );
         }
 
