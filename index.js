@@ -47,7 +47,7 @@ module.exports = {
 
         if ( attachments.length > 0 ) {
             var attach = [ ];
-            attachments.each( function( item ) {
+            attachments.forEach( function( item ) {
                 var map = { };
                 [ 'fallback', 'color', 'pretext', 'author_name', 'author_link', 'author_icon',
                   'title', 'title_link', 'text', 'fields', 'image_url', 'thumb_url' ].forEach( function( field ) {
