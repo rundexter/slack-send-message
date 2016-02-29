@@ -33,6 +33,7 @@ module.exports = {
                 , as_user      : isBot
                 , username     : username
                 , token        : accessToken
+                , mrkdwn       : true
             }
             , data
         ;
