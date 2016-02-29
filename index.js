@@ -18,7 +18,7 @@ module.exports = {
      */
     , run: function(step, dexter) {
         var channels      = step.input('channel')
-            , attachments = step.input( 'attachments' )
+            , attachments = step.input( 'attachments' ).first()
             , provider    = dexter.provider('slack')
             , username    = step.input('username').first()
             , botToken    = provider.data('bot.bot_access_token')
