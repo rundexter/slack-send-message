@@ -51,7 +51,7 @@ module.exports = {
             attachments.forEach( function( item ) {
                 var map = { };
                 [ 'fallback', 'color', 'pretext', 'author_name', 'author_link', 'author_icon',
-                  'title', 'title_link', 'text', 'fields', 'image_url', 'thumb_url' ].forEach( function( field ) {
+                  'title', 'title_link', 'text', 'fields', 'image_url', 'thumb_url', 'mrkdwn_in' ].forEach( function( field ) {
                       if ( item[ field ] ) map[ field ] = item[ field ];
                    } );
 
