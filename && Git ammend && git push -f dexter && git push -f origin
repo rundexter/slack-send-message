@@ -1,5 +1,4 @@
 var rest = require('restler')
-  , req  = require('superagent')
   , _    = require('lodash')
   , q    = require('q')
 ;
@@ -11,56 +10,20 @@ module.exports = {
      */
     init: function() {
     }
-    , getUsername: function(step, dexter) {
-        var deferred = q.defer()
-          , provider    = dexter.provider('slack')
-          , botToken    = provider.data('bot.bot_access_token')
-          , accessToken =  botToken || provider.credentials('access_token')
-          , self        = this
-        ;
-
-        this.state.username = step.input('username').first();
-
-        if(!this.state.username && accessToken) {
-            req.post('https://slack.com/api/auth.test')
-              .type('form')
-              .send({ token: accessToken })
-              .end(function(err, result) {
-                    self.state.username = result.body.user;
-
-                    return err && result.ok
-                      ? deferred.reject(err)
-                      : deferred.resolve(result.body.user)
-                    ;
-              });
-
-        } else {
-            return q(this.state);
-        }
-
-        return deferred.promise;
-    }
-    , run: function(step, dexter) {
-        this.state = {};
-
-        this.getUsername(step, dexter)
-            .then(this.processRequest.bind(this, step, dexter))
-            .catch(this.fail.bind(this));
-    }
     /**
      * run
      *
      * @param {WFDataStep} step Accessor for the configuration for the step using this module.  Use step.input('{key}') to retrieve input data.
      * @param {WFDataParser} dexter Container for all data used in this workflow.
      */
-    , processRequest: function(step, dexter) {
+    , run: function(step, dexter) {
         var channels      = step.input('channel')
             , attachments = step.input( 'attachments').first() || []
             , provider    = dexter.provider('slack')
+            , username    = step.input('username').first() || provider.data('bot.bot_user_id')
             , botToken    = provider.data('bot.bot_access_token')
-            , accessToken =  botToken || provider.credentials('access_token')
-            , username    = this.state.username//step.input('username').first()
             , isBot       = !username && !!botToken //operate as the bot if we don't have a different username and we have a bot token
+            , accessToken =  botToken || provider.credentials('access_token')
             , url         = 'https://slack.com/api/chat.postMessage'
             , connections = []
             , self        = this
@@ -74,6 +37,8 @@ module.exports = {
             }
             , data
         ;
+
+        self.log([accessToken, provider.data()]);
 
         if(postData.text === undefined) return this.fail("Text is required.");
 
@@ -114,10 +79,9 @@ module.exports = {
         .fail(this.fail.bind(this));
    }
    , send: function(data, url) {
-        var deferred = q.defer()
-          , self     = this
-        ;
+        var deferred = q.defer();
         rest.post(url, {data:data}).on('complete', function(result, response) {
+            self.log(response.body);
 
             if(result instanceof Error) {
                 return deferred.reject(result.stack || result);

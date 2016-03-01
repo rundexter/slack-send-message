@@ -31,9 +31,8 @@ module.exports = _.merge({
         local_test_step: {
             input: {
                 text        : 'Dexter test fixture...success!',
-                username    : 'Dexter Bot',
-                channel     : '#general',
-                icon_emoji  : ':ghost:'
+                channel     : '#dexter-commits'
+                //icon_emoji  : ':ghost:'
             }
         }
     }

@@ -34,7 +34,7 @@
     ],
     "providers" : [{
         "name" : "slack",
-        "scopes" : [ "chat:write:bot" ]
+        "scopes" : [ "chat:write:user" ]
     }],
     "icon" : "slack",
     "title": "Slack Send Message"
