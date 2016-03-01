@@ -18,7 +18,7 @@ module.exports = {
      */
     , run: function(step, dexter) {
         var channels      = step.input('channel')
-            , attachments = step.input( 'attachments' ).first()
+            , attachments = step.input( 'attachments').first() || []
             , provider    = dexter.provider('slack')
             , username    = step.input('username').first()
             , botToken    = provider.data('bot.bot_access_token')
@@ -65,11 +65,7 @@ module.exports = {
         if(channels.length > 0) {
             channels.each(function(channel) {
                 data = _.clone(postData);
-                data.unfurl_links = attachments.length == 0 ? true : false;
-                //if(!/^[@#C]/.test(channel)) {
-                //    channel = '#' + channel;
-                //    console.log('No prefix: assumed', channel);
-                //}
+                data.unfurl_links = attachments.length === 0 ? true : false;
                 data.channel = channel;
                 connections.push(self.send(data, url));
             });
