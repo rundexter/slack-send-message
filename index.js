@@ -1,5 +1,4 @@
-var rest = require('restler')
-  , req  = require('superagent')
+var req  = require('superagent')
   , _    = require('lodash')
   , q    = require('q')
 ;
@@ -28,7 +27,7 @@ module.exports = {
               .end(function(err, result) {
                     self.state.username = result.body.user;
 
-                    return err && result.ok
+                    return err || !result.ok
                       ? deferred.reject(err)
                       : deferred.resolve(result.body.user)
                     ;
@@ -117,23 +116,21 @@ module.exports = {
         var deferred = q.defer()
           , self     = this
         ;
-        rest.post(url, {data:data}).on('complete', function(result, response) {
 
-            if(result instanceof Error) {
-                return deferred.reject(result.stack || result);
-            }
-            if(response.statusCode !== 200) {
-                return deferred.reject({
-                    message: 'Error Result From Slack',
-                    code: response.statusCode,
-                    postData: data
-                });
-            }
-            return deferred.resolve(_.merge(
-                _.isObject(result) ? result : { result: result }
-                , data
-            ));
-        });
+        req.post('https://slack.com/api/auth.test')
+          .type('form')
+          .send(data)
+          .end(function(err, result) {
+                console.log(result.body);
+                return err || !result.ok
+                  ? deferred.reject({
+                    result: result
+                  })
+                  : deferred.resolve(_.extend(data, result.body))
+               ;
+
+          });
+
         return deferred.promise;
    }
 };
