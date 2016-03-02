@@ -117,11 +117,10 @@ module.exports = {
           , self     = this
         ;
 
-        req.post('https://slack.com/api/auth.test')
+        req.post(url)
           .type('form')
           .send(data)
           .end(function(err, result) {
-                console.log(result.body);
                 return err || !result.ok
                   ? deferred.reject({
                     result: result
