@@ -53,64 +53,62 @@ module.exports = {
      * @param {WFDataParser} dexter Container for all data used in this workflow.
      */
     , processRequest: function(step, dexter) {
-        var channels      = step.input('channel')
-            , attachments = step.input( 'attachments').first() || []
-            , provider    = dexter.provider('slack')
-            , botToken    = provider.data('bot.bot_access_token')
-            , accessToken =  botToken || provider.credentials('access_token')
-            , username    = this.state.username//step.input('username').first()
-            , isBot       = !username && !!botToken //operate as the bot if we don't have a different username and we have a bot token
-            , url         = 'https://slack.com/api/chat.postMessage'
-            , connections = []
-            , self        = this
-            , postData      = {
-                icon_emoji     : step.input('icon_emoji').first()
-                , text         : step.input('text').first()
-                , as_user      : isBot
-                , username     : username
-                , token        : accessToken
-                , mrkdwn       : true
-            }
-            , data
+        var channels    = step.input('channel')
+          , attachments = step.input( 'attachments')
+          , texts       = step.input('text')
+          , provider    = dexter.provider('slack')
+          , botToken    = provider.data('bot.bot_access_token')
+          , accessToken =  botToken || provider.credentials('access_token')
+          , username    = this.state.username//step.input('username').first()
+          , isBot       = !username && !!botToken //operate as the bot if we don't have a different username and we have a bot token
+          , url         = 'https://slack.com/api/chat.postMessage'
+          , connections = []
+          , self        = this
+          , postData    = {
+              icon_emoji  : step.input('icon_emoji').first()
+              , as_user   : isBot
+              , username  : username
+              , token     : accessToken
+              , mrkdwn    : true
+          }
+          , data
         ;
 
-        if(postData.text === undefined) return this.fail("Text is required.");
+        //use the channels array to dictate how many messages get sent out
+        channels.each(function(channel, idx) {
+            //grabe the base post data
+            data         = _.clone(postData);
 
-        //special case for when the text is "0"
-        //slack won't accept it without a leading space
-        if(postData.text === 0 || postData.text === "0") postData.text = " 0";
+            data.channel = channel;
 
-        if ( attachments.length > 0 ) {
-            var attach = [ ];
-            attachments.forEach( function( item ) {
-                var map = { };
-                [ 'fallback', 'color', 'pretext', 'author_name', 'author_link', 'author_icon',
-                  'title', 'title_link', 'text', 'fields', 'image_url', 'thumb_url', 'mrkdwn_in' ].forEach( function( field ) {
-                      if ( item[ field ] ) map[ field ] = item[ field ];
-                   } );
+            //use the corresponding text, but fallback to the first entry (null will skip the text field)
+            data.text    = texts[idx] !== undefined ? texts[idx] : texts[0];
 
-                attach.push( map );
-            } );
+            if(data.text === undefined) return self.fail("Text is required.");
 
-            /* the attachments "array" actually needs to be a JSON encoded string. Weird. */
-            postData.attachments = JSON.stringify( attach );
-        }
+            //special case for when the text is "0"
+            //slack won't accept it without a leading space
+            if(data.text === 0 || data.text === "0") data.text = " 0";
 
-        if(channels.length > 0) {
-            channels.each(function(channel) {
-                data = _.clone(postData);
-                data.unfurl_links = attachments.length === 0 ? true : false;
-                data.channel = channel;
-                connections.push(self.send(data, url));
-            });
-        } else {
-            //Assume we'll use the default channel
-            connections.push(this.send(data, url));
-        }
-        q.all(connections).then(function(results) {
-            self.complete(results);
-        })
-        .fail(this.fail.bind(this));
+
+            //if there are attachments handle them
+            if(attachments.length) {
+                data.attachments  = attachments[idx] !== undefined ? attachments[idx] : attachments[0];
+                data.unfurl_links = false;
+
+                /* the attachments "array" actually needs to be a JSON encoded string. Weird. */
+                data.attachments = JSON.stringify( data.attachments );
+            } else {
+                data.unfurl_links = true;
+            }
+
+            connections.push(self.send(data, url));
+        });
+        
+        q.all(connections)
+          .then(this.complete.bind(this))
+          .fail(this.fail.bind(this))
+        ;
    }
    , send: function(data, url) {
         var deferred = q.defer()
@@ -121,9 +119,10 @@ module.exports = {
           .type('form')
           .send(data)
           .end(function(err, result) {
-                return err || !result.ok
+                return err || !_.get(result,'body.ok')
                   ? deferred.reject({
-                    result: result
+                    error: err,
+                    result: _.get(result,'body')
                   })
                   : deferred.resolve(_.extend(data, result.body))
                ;
