@@ -61,12 +61,12 @@ module.exports = {
           , accessToken =  botToken || provider.credentials('access_token')
           , username    = this.state.username//step.input('username').first()
           , isBot       = !username && !!botToken //operate as the bot if we don't have a different username and we have a bot token
+          , asUser      = step.input('as_user')
           , url         = 'https://slack.com/api/chat.postMessage'
           , connections = []
           , self        = this
           , postData    = {
               icon_emoji  : step.input('icon_emoji').first()
-              , as_user   : isBot
               , username  : username
               , token     : accessToken
               , mrkdwn    : true
@@ -85,6 +85,10 @@ module.exports = {
             data.text    = texts[idx] !== undefined ? texts[idx] : texts[0];
 
             if(data.text === undefined) return self.fail("Text is required.");
+
+            //send it as the authed user
+            if(asUser.length)
+                data.as_user = _.isNil(asUser[idx]) ? asUser[0] : asUser[idx];
 
             //special case for when the text is "0"
             //slack won't accept it without a leading space

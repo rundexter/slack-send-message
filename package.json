@@ -7,7 +7,7 @@
   "license"     : "MIT",
   "private"     : true,
   "dependencies": {
-    "lodash"     : "^3.10.0",
+    "lodash"     : "^4",
     "q"          : "^1.4.1",
     "superagent" : "^1.7.2"
   },
