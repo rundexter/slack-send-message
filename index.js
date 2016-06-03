@@ -14,7 +14,7 @@ module.exports = {
         var deferred = q.defer()
           , provider    = dexter.provider('slack')
           , botToken    = provider.data('bot.bot_access_token')
-          , accessToken =  botToken || provider.credentials('access_token')
+          , accessToken = step.input('access_token').first() ||  botToken || provider.credentials('access_token')
           , self        = this
         ;
 
