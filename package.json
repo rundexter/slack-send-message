@@ -1,6 +1,6 @@
 {
   "name"        : "slack-send-message",
-  "version"     : "0.0.5",
+  "version"     : "0.0.6",
   "description" : "Send a slack message",
   "main"        : "index.js",
   "author"      : "Run Dexter, Inc.",
